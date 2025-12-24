@@ -1,0 +1,6 @@
+# Byte.JC Robots.txt
+User-agent: *
+Allow: /
+
+# Sitemap (atualizar quando tiver dominio)
+Sitemap: https://example.com/sitemap.xml
