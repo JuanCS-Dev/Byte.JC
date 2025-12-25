@@ -4,6 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { MARATHON_APPS } from '../data/MarathonData';
 import { Monolith } from './Monolith';
 import { ChevronRight, ChevronDown } from 'lucide-react';
+import { ANIMATION_CONFIG, LAYOUT_CONFIG } from '../config/animation';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -14,7 +15,7 @@ export const VentureLabs: React.FC = () => {
 
   // Detect mobile on mount and resize
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    const checkMobile = () => setIsMobile(window.innerWidth < LAYOUT_CONFIG.mobileBreakpoint);
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
@@ -35,7 +36,7 @@ export const VentureLabs: React.FC = () => {
         scrollTrigger: {
           trigger: containerRef.current,
           pin: true,
-          scrub: 1,
+          scrub: ANIMATION_CONFIG.scrollTrigger.scrub,
           snap: 1 / (sections.length - 1),
           end: () => "+=" + (sliderRef.current!.offsetWidth),
         }

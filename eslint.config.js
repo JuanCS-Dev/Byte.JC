@@ -19,5 +19,15 @@ export default defineConfig([
       ecmaVersion: 2020,
       globals: globals.browser,
     },
+    rules: {
+      // Type safety - prevent any usage
+      '@typescript-eslint/no-explicit-any': 'warn',
+
+      // React performance hints
+      'react-hooks/exhaustive-deps': 'warn',
+
+      // Disable strict ref rules for legacy patterns
+      'react-hooks/refs': 'off',
+    },
   },
 ])

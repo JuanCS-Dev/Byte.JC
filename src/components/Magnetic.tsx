@@ -1,48 +1,64 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useCallback } from 'react';
 import gsap from 'gsap';
+import { ANIMATION_CONFIG } from '../config/animation';
 
 interface MagneticProps {
   children: React.ReactElement;
-  strength?: number; // How strong the pull is
+  strength?: number;
 }
 
-export const Magnetic: React.FC<MagneticProps> = ({ children, strength = 0.5 }) => {
-  // Fix: changed HTMLDivElement to HTMLElement to accommodate other elements like anchors
+export const Magnetic: React.FC<MagneticProps> = ({
+  children,
+  strength = ANIMATION_CONFIG.magnetic.defaultStrength
+}) => {
   const magnetic = useRef<HTMLElement>(null);
 
-  useEffect(() => {
-    if (!magnetic.current) return;
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    const element = magnetic.current;
+    if (!element) return;
 
-    const xTo = gsap.quickTo(magnetic.current, "x", {duration: 1, ease: "elastic.out(1, 0.3)"});
-    const yTo = gsap.quickTo(magnetic.current, "y", {duration: 1, ease: "elastic.out(1, 0.3)"});
+    const { clientX, clientY } = e;
+    const { height, width, left, top } = element.getBoundingClientRect();
+    const x = clientX - (left + width / 2);
+    const y = clientY - (top + height / 2);
 
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!magnetic.current) return;
-      const { clientX, clientY } = e;
-      const { height, width, left, top } = magnetic.current.getBoundingClientRect();
-      const x = clientX - (left + width / 2);
-      const y = clientY - (top + height / 2);
-      
-      xTo(x * strength);
-      yTo(y * strength);
-    };
-
-    const handleMouseLeave = () => {
-      xTo(0);
-      yTo(0);
-    };
-
-    magnetic.current.addEventListener("mousemove", handleMouseMove);
-    magnetic.current.addEventListener("mouseleave", handleMouseLeave);
-
-    return () => {
-      if(magnetic.current) {
-        magnetic.current.removeEventListener("mousemove", handleMouseMove);
-        magnetic.current.removeEventListener("mouseleave", handleMouseLeave);
-      }
-    };
+    gsap.to(element, {
+      x: x * strength,
+      y: y * strength,
+      duration: ANIMATION_CONFIG.magnetic.duration,
+      ease: ANIMATION_CONFIG.magnetic.ease,
+    });
   }, [strength]);
 
-  // Fix: cast children to ReactElement<any> to resolve TS error about ref property
-  return React.cloneElement(children as React.ReactElement<any>, { ref: magnetic });
+  const handleMouseLeave = useCallback(() => {
+    const element = magnetic.current;
+    if (!element) return;
+
+    gsap.to(element, {
+      x: 0,
+      y: 0,
+      duration: ANIMATION_CONFIG.magnetic.duration,
+      ease: ANIMATION_CONFIG.magnetic.ease,
+    });
+  }, []);
+
+  useEffect(() => {
+    const element = magnetic.current;
+    if (!element) return;
+
+    element.addEventListener('mousemove', handleMouseMove);
+    element.addEventListener('mouseleave', handleMouseLeave);
+
+    return () => {
+      element.removeEventListener('mousemove', handleMouseMove);
+      element.removeEventListener('mouseleave', handleMouseLeave);
+    };
+  }, [handleMouseMove, handleMouseLeave]);
+
+  // Use callback ref pattern to avoid ref-during-render issues
+  const setRef = useCallback((node: HTMLElement | null) => {
+    magnetic.current = node;
+  }, []);
+
+  return React.cloneElement(children, { ref: setRef });
 };

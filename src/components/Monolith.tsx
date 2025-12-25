@@ -23,11 +23,11 @@ const GLASS_CLASSES = `
   transition-transform duration-700 ease-out
 `;
 
-const VibeIcon = ({ vibe }: { vibe?: string }) => {
+const VibeIcon = React.memo(({ vibe }: { vibe?: string }) => {
   if (vibe === "Hardcore") return <Zap size={12} className="text-red-400" />;
   if (vibe === "Vibe Coding") return <Sparkles size={12} className="text-purple-400" />;
   return <Code2 size={12} className="text-blue-400" />;
-};
+});
 
 const getVibeColor = (vibe?: string) => {
   if (vibe === "Hardcore") return "border-red-500/30 text-red-400 bg-red-500/10";
@@ -42,7 +42,7 @@ const getGradient = (id: string) => {
   return `linear-gradient(135deg, hsl(${hue}, 60%, 20%) 0%, hsl(${hue + 40}, 60%, 10%) 100%)`;
 };
 
-export const Monolith: React.FC<MonolithProps> = ({ app, isGlitching }) => {
+export const Monolith: React.FC<MonolithProps> = React.memo(({ app, isGlitching }) => {
   const contentRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
@@ -237,4 +237,4 @@ export const Monolith: React.FC<MonolithProps> = ({ app, isGlitching }) => {
       </div>
     </div>
   );
-};
+});

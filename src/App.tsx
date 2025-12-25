@@ -13,6 +13,7 @@ import {
   X
 } from 'lucide-react';
 import Lenis from 'lenis';
+import { ANIMATION_CONFIG, LAYOUT_CONFIG } from './config/animation';
 
 // Lazy load heavy component
 const VentureLabs = lazy(() => import('./components/VentureLabs').then(m => ({ default: m.VentureLabs })));
@@ -104,9 +105,9 @@ const App: React.FC = () => {
   // Initialize Lenis for smooth scroll
   useEffect(() => {
     const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      orientation: 'vertical', 
+      duration: ANIMATION_CONFIG.lenis.duration,
+      easing: ANIMATION_CONFIG.lenis.easing,
+      orientation: 'vertical',
       smoothWheel: true,
     });
 
@@ -197,8 +198,8 @@ const App: React.FC = () => {
       </AnimatePresence>
 
       {/* Background Grid */}
-      <div className="fixed inset-0 z-0 opacity-[0.03] pointer-events-none" 
-           style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)', backgroundSize: '50px 50px' }} 
+      <div className="fixed inset-0 z-0 opacity-[0.03] pointer-events-none"
+           style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)', backgroundSize: `${LAYOUT_CONFIG.gridSize}px ${LAYOUT_CONFIG.gridSize}px` }}
       />
 
       {/* Header */}
